@@ -1,0 +1,110 @@
+{
+  "last_updated": "2026-02-13T22:02:42.873941+00:00",
+  "accounts": {
+    "act_1255476805495795": {
+      "name": "Cyber Heights",
+      "days": [
+        {
+          "date": "2026-02-12",
+          "impressions": 3866,
+          "clicks": 51,
+          "cpm": 24.508536,
+          "frequency": 1.122532,
+          "spend": 94.75,
+          "leads": 2,
+          "cpl": 47.375
+        }
+      ],
+      "summary": {
+        "current": {
+          "impressions": 12861,
+          "clicks": 199,
+          "cpm": 56.696213,
+          "frequency": 1.780809,
+          "spend": 729.17,
+          "leads": 7,
+          "cpl": 104.167143
+        },
+        "previous": {
+          "impressions": 12998,
+          "clicks": 227,
+          "cpm": 52.454993,
+          "frequency": 1.852887,
+          "spend": 681.81,
+          "leads": 2,
+          "cpl": 340.905
+        }
+      }
+    },
+    "act_7659547477405593": {
+      "name": "Elevatione Spa & Beauty",
+      "days": [
+        {
+          "date": "2026-02-12",
+          "impressions": 6126,
+          "clicks": 115,
+          "cpm": 23.739798,
+          "frequency": 1.259716,
+          "spend": 145.43,
+          "leads": 2,
+          "cpl": 72.715
+        }
+      ],
+      "summary": {
+        "current": {
+          "impressions": 34442,
+          "clicks": 724,
+          "cpm": 29.861797,
+          "frequency": 2.165755,
+          "spend": 1028.5,
+          "leads": 30,
+          "cpl": 34.283333
+        },
+        "previous": {
+          "impressions": 24603,
+          "clicks": 657,
+          "cpm": 42.943137,
+          "frequency": 1.593459,
+          "spend": 1056.53,
+          "leads": 42,
+          "cpl": 25.155476
+        }
+      }
+    },
+    "act_899524064693858": {
+      "name": "Aionios Med Spa",
+      "days": [
+        {
+          "date": "2026-02-12",
+          "impressions": 14517,
+          "clicks": 208,
+          "cpm": 10.068885,
+          "frequency": 1.056858,
+          "spend": 146.17,
+          "leads": 18,
+          "cpl": 8.120556
+        }
+      ],
+      "summary": {
+        "current": {
+          "impressions": 120333,
+          "clicks": 1824,
+          "cpm": 9.90734,
+          "frequency": 1.216591,
+          "spend": 1192.18,
+          "leads": 216,
+          "cpl": 5.519352
+        },
+        "previous": {
+          "impressions": 135559,
+          "clicks": 2007,
+          "cpm": 9.011648,
+          "frequency": 1.25983,
+          "spend": 1221.61,
+          "leads": 222,
+          "cpl": 5.502748
+        }
+      }
+    }
+  }
+}
