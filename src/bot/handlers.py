@@ -6,7 +6,8 @@ from telegram import Update
 from telegram.ext import ContextTypes
 
 from config.settings import Settings
-from src.bot import formatters, keyboards
+from src.bot import formatters, keyboards, medspa
+from src.bot.notion_sync import sync_clients
 from src.facebook import insights, management
 
 logger = logging.getLogger("fb-ads-bot")
@@ -18,6 +19,11 @@ def _authorized(settings: Settings):
     def decorator(func):
         async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id = update.effective_chat.id if update.effective_chat else None
+            logger.info(
+                "%s from chat_id=%s",
+                func.__name__,
+                chat_id,
+            )
             if chat_id != settings.telegram_chat_id:
                 logger.warning("Unauthorized access attempt from chat_id=%s", chat_id)
                 return
@@ -78,6 +84,44 @@ def register_handlers(app, settings: Settings) -> None:
             )
 
     @auth
+    async def generate_ads_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        state = medspa.load_state()
+        clients = medspa.get_clients(state)
+        if not clients:
+            await update.message.reply_text(
+                "No cached clients\\. Run /medspa\\-ads in Claude Code first\\.",
+                parse_mode="MarkdownV2",
+            )
+            return
+        await update.message.reply_text(
+            "🎨 *Generate Ads*\n\nSelect a client:",
+            reply_markup=keyboards.ads_client_selector(clients),
+            parse_mode="MarkdownV2",
+        )
+
+    @auth
+    async def sync_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        if not settings.notion_api_key or not settings.notion_clients_db_id:
+            await update.message.reply_text(
+                "Notion not configured\\. Set NOTION\\_API\\_KEY and NOTION\\_CLIENTS\\_DB\\_ID in \\.env\\.",
+                parse_mode="MarkdownV2",
+            )
+            return
+        await update.message.reply_text("Syncing clients from Notion\\.\\.\\.", parse_mode="MarkdownV2")
+        try:
+            result = sync_clients(settings.notion_api_key, settings.notion_clients_db_id)
+            text = (
+                f"✅ *Synced {result['total']} clients*\n"
+                f"\\+{result['added']} new, "
+                f"{result['updated']} updated, "
+                f"\\-{result['removed']} removed"
+            )
+        except Exception as e:
+            logger.exception("Notion sync failed")
+            text = formatters.format_error(f"Sync failed: {e}")
+        await update.message.reply_text(text, parse_mode="MarkdownV2")
+
+    @auth
     async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         text = (
             "*Commands*\n\n"
@@ -85,6 +129,8 @@ def register_handlers(app, settings: Settings) -> None:
             "/report — Yesterday's metrics\n"
             "/weekly — 7\\-day comparison\n"
             "/campaigns — Manage campaigns\n"
+            "/generate\\_ads — Generate med\\-spa ad images\n"
+            "/sync — Refresh client list from Notion\n"
             "/help — This message"
         )
         await update.message.reply_text(text, parse_mode="MarkdownV2")
@@ -134,8 +180,18 @@ def register_handlers(app, settings: Settings) -> None:
     app.add_handler(CommandHandler("campaigns", campaigns_cmd))
     app.add_handler(CommandHandler("adsets", campaigns_cmd))  # alias
     app.add_handler(CommandHandler("ads", campaigns_cmd))  # alias
+    app.add_handler(CommandHandler("generate_ads", generate_ads_cmd))
+    app.add_handler(CommandHandler("sync", sync_cmd))
     app.add_handler(CommandHandler("help", help_cmd))
+    @auth
+    async def unknown_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        await update.message.reply_text(
+            "Unknown command\\. Try /help for available commands\\.",
+            parse_mode="MarkdownV2",
+        )
+
     app.add_handler(make_callback_handler(settings))
+    app.add_handler(MessageHandler(filters.COMMAND, unknown_cmd))
     app.add_handler(
         MessageHandler(filters.TEXT & ~filters.COMMAND, budget_text_handler)
     )

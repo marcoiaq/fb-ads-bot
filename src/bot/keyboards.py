@@ -14,6 +14,7 @@ def main_menu() -> InlineKeyboardMarkup:
             ],
             [
                 InlineKeyboardButton("🎯 Campaigns", callback_data="cmd_campaigns"),
+                InlineKeyboardButton("🎨 Generate Ads", callback_data="cmd_generate_ads"),
             ],
             [
                 InlineKeyboardButton("ℹ️ Help", callback_data="cmd_help"),
@@ -111,6 +112,74 @@ def entity_actions(
     buttons.append(
         [InlineKeyboardButton("« Back", callback_data=parent_callback)]
     )
+    return InlineKeyboardMarkup(buttons)
+
+
+def ads_client_selector(clients: list[dict]) -> InlineKeyboardMarkup:
+    """Client picker for ad generation with stage emoji."""
+    buttons = [
+        [
+            InlineKeyboardButton(
+                f"{c.get('emoji', '')} {c['name']}"[:40],
+                callback_data=f"ads_client_{c['slug']}",
+            )
+        ]
+        for c in clients
+    ]
+    buttons.append([
+        InlineKeyboardButton("🔄 Sync Clients", callback_data="ads_sync_clients"),
+        InlineKeyboardButton("« Cancel", callback_data="cmd_start"),
+    ])
+    return InlineKeyboardMarkup(buttons)
+
+
+def ads_offer_selector(
+    offers: list[dict], client_slug: str
+) -> InlineKeyboardMarkup:
+    """Offer picker for ad generation."""
+    buttons = [
+        [
+            InlineKeyboardButton(
+                f"{o['name']} — {o['price']}",
+                callback_data=f"ads_offer_{client_slug}_{o['slug']}",
+            )
+        ]
+        for o in offers
+    ]
+    buttons.append([
+        InlineKeyboardButton("🔄 Sync Offers", callback_data=f"ads_sync_offers_{client_slug}"),
+        InlineKeyboardButton("« Back", callback_data="ads_cancel"),
+    ])
+    return InlineKeyboardMarkup(buttons)
+
+
+def ads_hook_selector(
+    hooks: list[dict],
+    selected_indices: set[int],
+    client_slug: str,
+    offer_slug: str,
+) -> InlineKeyboardMarkup:
+    """Hook multi-select for ad generation."""
+    buttons = []
+    for i, h in enumerate(hooks):
+        prefix = "✅ " if i in selected_indices else ""
+        label = f"{prefix}{h['hook'][:40]}"
+        buttons.append(
+            [InlineKeyboardButton(label, callback_data=f"ads_hook_{i}")]
+        )
+
+    action_row = []
+    if selected_indices:
+        action_row.append(
+            InlineKeyboardButton("🎨 Generate", callback_data="ads_generate")
+        )
+    action_row.append(
+        InlineKeyboardButton(
+            "« Back",
+            callback_data=f"ads_client_{client_slug}",
+        )
+    )
+    buttons.append(action_row)
     return InlineKeyboardMarkup(buttons)
 
 

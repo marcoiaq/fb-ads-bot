@@ -29,6 +29,8 @@ class Settings:
     ad_account_ids: list[str] = field(default_factory=list)
     timezone: str = "Europe/Rome"
     report_time_hour: int = 9
+    notion_api_key: str = ""
+    notion_clients_db_id: str = ""
 
     @classmethod
     def load(cls) -> Settings:
@@ -48,4 +50,6 @@ class Settings:
             ad_account_ids=accounts,
             timezone=os.getenv("TIMEZONE", "Europe/Rome").strip(),
             report_time_hour=int(os.getenv("REPORT_TIME_HOUR", "9")),
+            notion_api_key=os.getenv("NOTION_API_KEY", "").strip(),
+            notion_clients_db_id=os.getenv("NOTION_CLIENTS_DB_ID", "").strip(),
         )

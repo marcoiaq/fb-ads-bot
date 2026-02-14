@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import logging
 
-from telegram import Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackQueryHandler, ContextTypes
 
 from config.settings import Settings
-from src.bot import formatters, keyboards
+from src.bot import formatters, keyboards, medspa
+from src.bot.notion_sync import sync_clients, sync_offers
 from src.facebook import insights, management
 
 logger = logging.getLogger("fb-ads-bot")
@@ -70,6 +71,22 @@ def make_callback_handler(settings: Settings) -> CallbackQueryHandler:
                 )
             return
 
+        if data == "cmd_generate_ads":
+            state = medspa.load_state()
+            clients = medspa.get_clients(state)
+            if not clients:
+                await query.edit_message_text(
+                    "No cached clients\\. Run /medspa\\-ads in Claude Code first\\.",
+                    parse_mode="MarkdownV2",
+                )
+                return
+            await query.edit_message_text(
+                "🎨 *Generate Ads*\n\nSelect a client:",
+                reply_markup=keyboards.ads_client_selector(clients),
+                parse_mode="MarkdownV2",
+            )
+            return
+
         if data == "cmd_help":
             text = (
                 "*Commands*\n\n"
@@ -77,11 +94,153 @@ def make_callback_handler(settings: Settings) -> CallbackQueryHandler:
                 "/report — Yesterday's metrics\n"
                 "/weekly — 7\\-day comparison\n"
                 "/campaigns — Manage campaigns\n"
+                "/generate\\_ads — Generate med\\-spa ad images\n"
                 "/help — This message"
             )
             await query.edit_message_text(
                 text,
                 reply_markup=keyboards.main_menu(),
+                parse_mode="MarkdownV2",
+            )
+            return
+
+        # --- Ad generation sync buttons ---
+        if data == "ads_sync_clients":
+            if not settings.notion_api_key or not settings.notion_clients_db_id:
+                await query.edit_message_text(
+                    "Notion not configured\\. Set NOTION\\_API\\_KEY in \\.env\\.",
+                    parse_mode="MarkdownV2",
+                )
+                return
+            await query.edit_message_text("🔄 Syncing clients from Notion\\.\\.\\.", parse_mode="MarkdownV2")
+            try:
+                result = sync_clients(settings.notion_api_key, settings.notion_clients_db_id)
+                state = medspa.load_state()
+                clients = medspa.get_clients(state)
+                await query.edit_message_text(
+                    f"✅ Synced {result['total']} clients "
+                    f"\\(\\+{result['added']} new\\)\n\nSelect a client:",
+                    reply_markup=keyboards.ads_client_selector(clients),
+                    parse_mode="MarkdownV2",
+                )
+            except Exception as e:
+                logger.exception("Client sync failed")
+                await query.edit_message_text(
+                    formatters.format_error(f"Sync failed: {e}"),
+                    parse_mode="MarkdownV2",
+                )
+            return
+
+        if data.startswith("ads_sync_offers_"):
+            client_slug = data.replace("ads_sync_offers_", "")
+            if not settings.notion_api_key:
+                await query.edit_message_text(
+                    "Notion not configured\\. Set NOTION\\_API\\_KEY in \\.env\\.",
+                    parse_mode="MarkdownV2",
+                )
+                return
+            await query.edit_message_text("🔄 Syncing offers from Notion\\.\\.\\.", parse_mode="MarkdownV2")
+            try:
+                result = sync_offers(settings.notion_api_key, client_slug)
+                state = medspa.load_state()
+                offers = medspa.get_offers(state, client_slug)
+                await query.edit_message_text(
+                    f"✅ Synced {result['total']} offers\\.\n\nSelect an offer:",
+                    reply_markup=keyboards.ads_offer_selector(offers, client_slug),
+                    parse_mode="MarkdownV2",
+                )
+            except Exception as e:
+                logger.exception("Offer sync failed for %s", client_slug)
+                await query.edit_message_text(
+                    formatters.format_error(f"Offer sync failed: {e}"),
+                    parse_mode="MarkdownV2",
+                )
+            return
+
+        # --- Ad generation flow ---
+        if data.startswith("ads_client_"):
+            client_slug = data.replace("ads_client_", "")
+            state = medspa.load_state()
+            offers = medspa.get_offers(state, client_slug)
+            context.user_data["ads_client"] = client_slug
+            context.user_data["ads_selected_hooks"] = set()
+            if not offers:
+                await query.edit_message_text(
+                    "No cached offers\\. Tap Sync to load from Notion\\.",
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton(
+                            "🔄 Sync Offers",
+                            callback_data=f"ads_sync_offers_{client_slug}",
+                        )],
+                        [InlineKeyboardButton("« Back", callback_data="ads_cancel")],
+                    ]),
+                    parse_mode="MarkdownV2",
+                )
+                return
+            await query.edit_message_text(
+                "Select an offer:",
+                reply_markup=keyboards.ads_offer_selector(offers, client_slug),
+            )
+            return
+
+        if data.startswith("ads_offer_"):
+            remainder = data.replace("ads_offer_", "")
+            # Format: ads_offer_{client_slug}_{offer_slug}
+            client_slug = context.user_data.get("ads_client", "")
+            offer_slug = remainder.replace(f"{client_slug}_", "", 1)
+            context.user_data["ads_offer"] = offer_slug
+            context.user_data["ads_selected_hooks"] = set()
+
+            state = medspa.load_state()
+            hooks = medspa.get_hooks(state, client_slug, offer_slug)
+            if not hooks:
+                await query.edit_message_text(
+                    "No cached hooks for this client/offer\\. "
+                    "Run /medspa\\-ads in Claude Code to brainstorm hooks first\\.",
+                    parse_mode="MarkdownV2",
+                )
+                return
+            context.user_data["ads_hooks"] = hooks
+            await query.edit_message_text(
+                "Select hooks to generate \\(tap to toggle\\):",
+                reply_markup=keyboards.ads_hook_selector(
+                    hooks, set(), client_slug, offer_slug
+                ),
+                parse_mode="MarkdownV2",
+            )
+            return
+
+        if data.startswith("ads_hook_"):
+            idx = int(data.replace("ads_hook_", ""))
+            selected: set = context.user_data.get("ads_selected_hooks", set())
+            if idx in selected:
+                selected.discard(idx)
+            else:
+                selected.add(idx)
+            context.user_data["ads_selected_hooks"] = selected
+
+            hooks = context.user_data.get("ads_hooks", [])
+            client_slug = context.user_data.get("ads_client", "")
+            offer_slug = context.user_data.get("ads_offer", "")
+            await query.edit_message_text(
+                "Select hooks to generate \\(tap to toggle\\):",
+                reply_markup=keyboards.ads_hook_selector(
+                    hooks, selected, client_slug, offer_slug
+                ),
+                parse_mode="MarkdownV2",
+            )
+            return
+
+        if data == "ads_generate":
+            await _handle_ads_generate(query, context)
+            return
+
+        if data == "ads_cancel":
+            state = medspa.load_state()
+            clients = medspa.get_clients(state)
+            await query.edit_message_text(
+                "🎨 *Generate Ads*\n\nSelect a client:",
+                reply_markup=keyboards.ads_client_selector(clients),
                 parse_mode="MarkdownV2",
             )
             return
@@ -313,3 +472,78 @@ async def _handle_confirm(query, context, remainder: str) -> None:
         await query.edit_message_text(
             formatters.format_error(str(e)), parse_mode="MarkdownV2"
         )
+
+
+async def _handle_ads_generate(query, context) -> None:
+    """Run image generation for selected hooks and send results."""
+    client_slug = context.user_data.get("ads_client", "")
+    offer_slug = context.user_data.get("ads_offer", "")
+    selected: set = context.user_data.get("ads_selected_hooks", set())
+    all_hooks = context.user_data.get("ads_hooks", [])
+
+    hooks = [all_hooks[i] for i in sorted(selected) if i < len(all_hooks)]
+    if not hooks:
+        await query.edit_message_text("No hooks selected\\.", parse_mode="MarkdownV2")
+        return
+
+    # Find the offer dict
+    state = medspa.load_state()
+    offers = medspa.get_offers(state, client_slug)
+    offer = next((o for o in offers if o["slug"] == offer_slug), None)
+    if not offer:
+        await query.edit_message_text(
+            "Offer not found in cache\\.", parse_mode="MarkdownV2"
+        )
+        return
+
+    total = len(hooks) * 2
+    status_msg = await query.edit_message_text(
+        f"🎨 Generating {total} images\\.\\.\\.\n\n"
+        f"0/{total} complete",
+        parse_mode="MarkdownV2",
+    )
+
+    async def progress_callback(current, total, hook_text, size):
+        esc_hook = formatters._esc(hook_text[:30])
+        esc_size = formatters._esc(size)
+        try:
+            await status_msg.edit_text(
+                f"🎨 Generating images\\.\\.\\.\n\n"
+                f"{current}/{total}: {esc_hook} \\({esc_size}\\)",
+                parse_mode="MarkdownV2",
+            )
+        except Exception:
+            pass  # Telegram may rate-limit edits
+
+    results = await medspa.run_generation(hooks, offer, progress_callback)
+
+    if not results:
+        await status_msg.edit_text(
+            "All models quota\\-exhausted\\. Try again later or run "
+            "/medspa\\-ads in Claude Code\\.",
+            parse_mode="MarkdownV2",
+        )
+        return
+
+    await status_msg.edit_text(
+        f"✅ Generated {len(results)}/{total} images\\. Sending\\.\\.\\.",
+        parse_mode="MarkdownV2",
+    )
+
+    for path in results:
+        try:
+            with open(path, "rb") as f:
+                await query.message.reply_photo(
+                    photo=f, caption=path.name
+                )
+        except Exception as e:
+            logger.error("Failed to send image %s: %s", path, e)
+
+    # Update state
+    medspa.update_state_after_generation(state, client_slug, offer_slug, hooks)
+
+    await query.message.reply_text(
+        f"✅ Done\\! {len(results)} images generated\\.",
+        reply_markup=keyboards.main_menu(),
+        parse_mode="MarkdownV2",
+    )
