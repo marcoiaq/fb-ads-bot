@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-17T07:47:14.850395+00:00",
+  "last_updated": "2026-02-18T07:47:00.632843+00:00",
   "accounts": {
     "act_1255476805495795": {
       "name": "Cyber Heights",
@@ -23,26 +23,36 @@
           "spend": 72.3,
           "leads": 0,
           "cpl": null
+        },
+        {
+          "date": "2026-02-17",
+          "impressions": 0,
+          "clicks": 0,
+          "cpm": 0.0,
+          "frequency": 0.0,
+          "spend": 0.0,
+          "leads": 0,
+          "cpl": null
         }
       ],
       "summary": {
         "current": {
-          "impressions": 11651,
-          "clicks": 201,
-          "cpm": 57.697193,
-          "frequency": 1.867746,
-          "spend": 672.23,
-          "leads": 7,
-          "cpl": 96.032857
+          "impressions": 5937,
+          "clicks": 91,
+          "cpm": 41.787098,
+          "frequency": 1.324041,
+          "spend": 248.09,
+          "leads": 3,
+          "cpl": 82.696667
         },
         "previous": {
-          "impressions": 13189,
-          "clicks": 206,
-          "cpm": 53.932823,
-          "frequency": 1.741812,
-          "spend": 711.32,
-          "leads": 2,
-          "cpl": 355.66
+          "impressions": 10455,
+          "clicks": 168,
+          "cpm": 70.83979,
+          "frequency": 2.002874,
+          "spend": 740.63,
+          "leads": 5,
+          "cpl": 148.126
         }
       }
     },
@@ -98,26 +108,36 @@
           "spend": 113.8,
           "leads": 1,
           "cpl": 113.8
+        },
+        {
+          "date": "2026-02-17",
+          "impressions": 2340,
+          "clicks": 43,
+          "cpm": 34.65812,
+          "frequency": 1.264865,
+          "spend": 81.1,
+          "leads": 0,
+          "cpl": null
         }
       ],
       "summary": {
         "current": {
-          "impressions": 30953,
-          "clicks": 727,
-          "cpm": 28.560075,
-          "frequency": 2.113554,
-          "spend": 884.02,
-          "leads": 23,
-          "cpl": 38.435652
+          "impressions": 26288,
+          "clicks": 640,
+          "cpm": 31.019857,
+          "frequency": 2.001523,
+          "spend": 815.45,
+          "leads": 19,
+          "cpl": 42.918421
         },
         "previous": {
-          "impressions": 26873,
-          "clicks": 727,
-          "cpm": 38.090276,
-          "frequency": 1.878968,
-          "spend": 1023.6,
-          "leads": 50,
-          "cpl": 20.472
+          "impressions": 30575,
+          "clicks": 680,
+          "cpm": 34.031071,
+          "frequency": 2.070355,
+          "spend": 1040.5,
+          "leads": 35,
+          "cpl": 29.728571
         }
       }
     },
@@ -173,26 +193,36 @@
           "spend": 144.71,
           "leads": 10,
           "cpl": 14.471
+        },
+        {
+          "date": "2026-02-17",
+          "impressions": 15510,
+          "clicks": 163,
+          "cpm": 9.018053,
+          "frequency": 1.091485,
+          "spend": 139.87,
+          "leads": 18,
+          "cpl": 7.770556
         }
       ],
       "summary": {
         "current": {
-          "impressions": 110576,
-          "clicks": 1489,
-          "cpm": 9.715399,
-          "frequency": 1.314425,
-          "spend": 1074.29,
-          "leads": 138,
-          "cpl": 7.78471
+          "impressions": 109059,
+          "clicks": 1388,
+          "cpm": 9.566198,
+          "frequency": 1.361876,
+          "spend": 1043.28,
+          "leads": 131,
+          "cpl": 7.963969
         },
         "previous": {
-          "impressions": 129053,
-          "clicks": 1886,
-          "cpm": 9.438835,
-          "frequency": 1.226891,
-          "spend": 1218.11,
-          "leads": 237,
-          "cpl": 5.139705
+          "impressions": 126862,
+          "clicks": 1902,
+          "cpm": 9.607211,
+          "frequency": 1.205764,
+          "spend": 1218.79,
+          "leads": 236,
+          "cpl": 5.164364
         }
       }
     }
