@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-18T07:47:00.632843+00:00",
+  "last_updated": "2026-02-19T07:45:53.132547+00:00",
   "accounts": {
     "act_1255476805495795": {
       "name": "Cyber Heights",
@@ -118,26 +118,36 @@
           "spend": 81.1,
           "leads": 0,
           "cpl": null
+        },
+        {
+          "date": "2026-02-18",
+          "impressions": 2723,
+          "clicks": 81,
+          "cpm": 37.25303,
+          "frequency": 1.280207,
+          "spend": 101.44,
+          "leads": 2,
+          "cpl": 50.72
         }
       ],
       "summary": {
         "current": {
-          "impressions": 26288,
-          "clicks": 640,
-          "cpm": 31.019857,
-          "frequency": 2.001523,
-          "spend": 815.45,
+          "impressions": 24061,
+          "clicks": 631,
+          "cpm": 32.132912,
+          "frequency": 2.017356,
+          "spend": 773.15,
           "leads": 19,
-          "cpl": 42.918421
+          "cpl": 40.692105
         },
         "previous": {
-          "impressions": 30575,
-          "clicks": 680,
-          "cpm": 34.031071,
-          "frequency": 2.070355,
-          "spend": 1040.5,
-          "leads": 35,
-          "cpl": 29.728571
+          "impressions": 31326,
+          "clicks": 671,
+          "cpm": 33.307157,
+          "frequency": 2.109353,
+          "spend": 1043.38,
+          "leads": 30,
+          "cpl": 34.779333
         }
       }
     },
@@ -203,26 +213,36 @@
           "spend": 139.87,
           "leads": 18,
           "cpl": 7.770556
+        },
+        {
+          "date": "2026-02-18",
+          "impressions": 16666,
+          "clicks": 245,
+          "cpm": 9.014761,
+          "frequency": 1.105392,
+          "spend": 150.24,
+          "leads": 23,
+          "cpl": 6.532174
         }
       ],
       "summary": {
         "current": {
-          "impressions": 109059,
-          "clicks": 1388,
-          "cpm": 9.566198,
-          "frequency": 1.361876,
-          "spend": 1043.28,
-          "leads": 131,
-          "cpl": 7.963969
+          "impressions": 109818,
+          "clicks": 1404,
+          "cpm": 9.316961,
+          "frequency": 1.314619,
+          "spend": 1023.17,
+          "leads": 129,
+          "cpl": 7.93155
         },
         "previous": {
-          "impressions": 126862,
-          "clicks": 1902,
-          "cpm": 9.607211,
-          "frequency": 1.205764,
-          "spend": 1218.79,
-          "leads": 236,
-          "cpl": 5.164364
+          "impressions": 124076,
+          "clicks": 1852,
+          "cpm": 9.812534,
+          "frequency": 1.18026,
+          "spend": 1217.5,
+          "leads": 230,
+          "cpl": 5.293478
         }
       }
     }
