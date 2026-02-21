@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-20T07:43:49.361109+00:00",
+  "last_updated": "2026-02-21T07:28:32.559756+00:00",
   "accounts": {
     "act_1255476805495795": {
       "name": "Cyber Heights",
@@ -60,16 +60,6 @@
       "name": "Elevatione Spa & Beauty",
       "days": [
         {
-          "date": "2026-02-13",
-          "impressions": 4238,
-          "clicks": 89,
-          "cpm": 38.551203,
-          "frequency": 1.38542,
-          "spend": 163.38,
-          "leads": 5,
-          "cpl": 32.676
-        },
-        {
           "date": "2026-02-14",
           "impressions": 1823,
           "clicks": 70,
@@ -128,42 +118,42 @@
           "spend": 94.45,
           "leads": 4,
           "cpl": 23.6125
+        },
+        {
+          "date": "2026-02-20",
+          "impressions": 3202,
+          "clicks": 61,
+          "cpm": 30.028107,
+          "frequency": 1.239164,
+          "spend": 96.15,
+          "leads": 3,
+          "cpl": 32.05
         }
       ],
       "summary": {
         "current": {
-          "impressions": 20970,
-          "clicks": 592,
-          "cpm": 34.451598,
-          "frequency": 2.100992,
-          "spend": 722.45,
-          "leads": 21,
-          "cpl": 34.402381
+          "impressions": 19931,
+          "clicks": 564,
+          "cpm": 32.864884,
+          "frequency": 1.990314,
+          "spend": 655.03,
+          "leads": 19,
+          "cpl": 34.475263
         },
         "previous": {
-          "impressions": 34447,
-          "clicks": 724,
-          "cpm": 29.862978,
-          "frequency": 2.166069,
-          "spend": 1028.69,
-          "leads": 30,
-          "cpl": 34.289667
+          "impressions": 36538,
+          "clicks": 741,
+          "cpm": 29.096283,
+          "frequency": 2.23392,
+          "spend": 1063.12,
+          "leads": 26,
+          "cpl": 40.889231
         }
       }
     },
     "act_899524064693858": {
       "name": "Aionios Med Spa",
       "days": [
-        {
-          "date": "2026-02-13",
-          "impressions": 14249,
-          "clicks": 187,
-          "cpm": 10.056846,
-          "frequency": 1.086135,
-          "spend": 143.3,
-          "leads": 19,
-          "cpl": 7.542105
-        },
         {
           "date": "2026-02-14",
           "impressions": 15190,
@@ -223,26 +213,36 @@
           "spend": 138.83,
           "leads": 15,
           "cpl": 9.255333
+        },
+        {
+          "date": "2026-02-20",
+          "impressions": 17386,
+          "clicks": 254,
+          "cpm": 8.19625,
+          "frequency": 1.140365,
+          "spend": 142.5,
+          "leads": 36,
+          "cpl": 3.958333
         }
       ],
       "summary": {
         "current": {
-          "impressions": 110857,
-          "clicks": 1383,
-          "cpm": 9.164329,
-          "frequency": 1.281095,
-          "spend": 1015.93,
-          "leads": 126,
-          "cpl": 8.062937
+          "impressions": 113993,
+          "clicks": 1450,
+          "cpm": 8.904406,
+          "frequency": 1.282679,
+          "spend": 1015.04,
+          "leads": 143,
+          "cpl": 7.098182
         },
         "previous": {
-          "impressions": 120336,
-          "clicks": 1825,
-          "cpm": 9.907343,
-          "frequency": 1.216621,
-          "spend": 1192.21,
-          "leads": 216,
-          "cpl": 5.519491
+          "impressions": 118473,
+          "clicks": 1750,
+          "cpm": 9.872714,
+          "frequency": 1.218382,
+          "spend": 1169.65,
+          "leads": 202,
+          "cpl": 5.790347
         }
       }
     }
